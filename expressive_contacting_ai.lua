@@ -81,13 +81,13 @@ local Players = game:GetService("Players") or cloneref(game:GetService("Players"
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "Section_Menu"
+ScreenGui.Name = "PingDisplay"
 ScreenGui.Parent = PlayerGui
-ScreenGui.IgnoreGuiInset = true
+ScreenGui.IgnoreGuiInSet = true
 ScreenGui.ResetOnSpawn = false
 
 local TextLabel = Instance.new("TextLabel")
-TextLabel.Name = "Connection_Label"
+TextLabel.Name = "PingLabel"
 TextLabel.Parent = ScreenGui
 TextLabel.AnchorPoint = Vector2.new(1, 1)
 TextLabel.Position = UDim2.new(1, -200, 1, -850)
@@ -107,18 +107,34 @@ local GetPing = function()
     return math.floor(Stats.PerformanceStats.Ping:GetValue())
 end
 
+local lastPing = GetPing()
+local frozenTime = 0
+local frozenThreshold = 15
+
 task.spawn(function()
     while getgenv().Ping_Statistics do
         task.wait(1)
         local ping = GetPing()
         local status = ""
 
-        if ping > 1000 then
-            status = " [Lagging.]"
-        elseif ping > 500 then
-            status = " [Spiking.]"
+        if ping == lastPing then
+            frozenTime = frozenTime + 1
+            if frozenTime >= frozenThreshold then
+                status = " [Freezing.]"
+            end
+        else
+            frozenTime = 0
+        end
+
+        if frozenTime < frozenThreshold then
+            if ping > 1000 then
+                status = " [Lagging.]"
+            elseif ping > 500 then
+                status = " [Spiking.]"
+            end
         end
 
         TextLabel.Text = ping .. " ms" .. status
+        lastPing = ping
     end
 end)
