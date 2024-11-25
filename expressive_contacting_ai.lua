@@ -83,7 +83,7 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "PingDisplay"
 ScreenGui.Parent = PlayerGui
-ScreenGui.IgnoreGuiInSet = true
+ScreenGui.IgnoreGuiInset = true
 ScreenGui.ResetOnSpawn = false
 
 local TextLabel = Instance.new("TextLabel")
