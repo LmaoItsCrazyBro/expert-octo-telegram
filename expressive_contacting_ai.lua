@@ -138,3 +138,44 @@ task.spawn(function()
         lastPing = ping
     end
 end)
+task.wait(.1)
+local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "FPS_Counter"
+ScreenGui.Parent = PlayerGui
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ResetOnSpawn = false
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Name = "FPS_Label"
+TextLabel.Parent = ScreenGui
+TextLabel.AnchorPoint = Vector2.new(1, 1)
+TextLabel.Position = UDim2.new(1, -200, 1, -710)
+TextLabel.Size = UDim2.new(0, 130, 0, 50)
+TextLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BackgroundTransparency = 0.5
+TextLabel.BorderSizePixel = 0
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextScaled = true
+TextLabel.Font = Enum.Font.SourceSansBold
+TextLabel.Text = "Loading..."
+
+local RunService = game:GetService("RunService")
+
+local frameCount = 0
+local timeElapsed = 0
+local fps = 0
+
+RunService.Heartbeat:Connect(function(deltaTime)
+    frameCount = frameCount + 1
+    timeElapsed = timeElapsed + deltaTime
+
+    if timeElapsed >= 1 then
+        fps = frameCount
+        frameCount = 0
+        timeElapsed = 0
+        TextLabel.Text = fps.." FPS"
+    end
+end)
