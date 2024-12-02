@@ -109,7 +109,7 @@ local function updateTime()
         local regionTimeZone = timeZones[offset] or "Unknown Time Zone"
         local formattedTime = os.date("%I:%M:%S %p", currentTime):gsub("^0", "")
         TimeLabel.Text = string.format("%s (%s)", formattedTime, regionTimeZone)
-        task.wait(0.4)
+        task.wait(1)
     end
 end
 
