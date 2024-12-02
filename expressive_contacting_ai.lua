@@ -1,5 +1,19 @@
-local CoreGui = game:GetService("CoreGui")
-local Players = game:GetService("Players")
+local CoreGui
+local Players
+local RunService
+local Stats
+if cloneref then
+    CoreGui = cloneref(game:GetService("CoreGui"))
+    Players = cloneref(game:GetService("Players"))
+    RunService = cloneref(game:GetService("RunService"))
+    Stats = cloneref(game:GetService("Stats"))
+else
+    CoreGui = game:GetService("CoreGui")
+    Players = game:GetService("Players")
+    RunService = game:GetService("RunService")
+    Stats = game:GetService("Stats")
+end
+task.wait(0.1)
 local LocalPlayer = Players.LocalPlayer
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -88,19 +102,19 @@ local timeZones = {
 }
 
 local function updateTime()
-    while true do
+    getgenv().tickingTime = true
+    while getgenv().tickingTime == true do
         local currentTime = os.time()
         local offset = os.date("%z", currentTime)
         local regionTimeZone = timeZones[offset] or "Unknown Time Zone"
         local formattedTime = os.date("%I:%M:%S %p", currentTime):gsub("^0", "")
         TimeLabel.Text = string.format("%s (%s)", formattedTime, regionTimeZone)
-        task.wait(1)
+        task.wait(0.4)
     end
 end
 
 task.spawn(updateTime)
 
-local RunService = game:GetService("RunService")
 local frameCount = 0
 local timeElapsed = 0
 
@@ -113,10 +127,10 @@ RunService.Heartbeat:Connect(function(deltaTime)
         timeElapsed = 0
     end
 end)
-
-local Stats = game:GetService("Stats")
+task.wait()
 local function updatePing()
-    while true do
+    getgenv().preserve_ping_tick = true
+    while getgenv().preserve_ping_tick == true do
         local ping = math.floor(Stats.PerformanceStats.Ping:GetValue())
         PingLabel.Text = ping .. " ms"
         task.wait(1)
