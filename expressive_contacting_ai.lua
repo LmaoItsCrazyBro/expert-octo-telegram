@@ -133,7 +133,7 @@ local function updatePing()
     while getgenv().preserve_ping_tick == true do
         local ping = math.floor(Stats.PerformanceStats.Ping:GetValue())
         PingLabel.Text = ping .. " ms"
-        task.wait(1)
+        task.wait(0.4)
     end
 end
 
