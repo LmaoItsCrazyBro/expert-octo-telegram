@@ -2,23 +2,28 @@ local CoreGui
 local Players
 local RunService
 local Stats
+
 if cloneref then
-    CoreGui = cloneref(game:GetService("CoreGui"))
     Players = cloneref(game:GetService("Players"))
     RunService = cloneref(game:GetService("RunService"))
     Stats = cloneref(game:GetService("Stats"))
 else
-    CoreGui = game:GetService("CoreGui")
     Players = game:GetService("Players")
     RunService = game:GetService("RunService")
     Stats = game:GetService("Stats")
 end
+
 task.wait(0.1)
 local LocalPlayer = Players.LocalPlayer
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "TopBarUI"
-ScreenGui.Parent = CoreGui
+if get_hidden_gui or gethui then
+    local hiddenUI = get_hidden_gui or gethui
+    ScreenGui.Parent = hiddenUI()
+else
+    ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+end
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ResetOnSpawn = false
 
@@ -37,8 +42,8 @@ ToggleButton.Text = "Toggle UI"
 local UIContainer = Instance.new("Frame")
 UIContainer.Name = "UIContainer"
 UIContainer.Parent = ScreenGui
-UIContainer.Size = UDim2.new(0, 500, 0, 30) 
-UIContainer.Position = UDim2.new(0.5, -250, 0, 0)
+UIContainer.Size = UDim2.new(0, 700, 0, 30)
+UIContainer.Position = UDim2.new(0.5, -350, 0, 0)
 UIContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 UIContainer.BackgroundTransparency = 0.5
 UIContainer.BorderSizePixel = 0
@@ -79,6 +84,46 @@ FPSLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FPSLabel.TextScaled = true
 FPSLabel.Font = Enum.Font.SourceSansBold
 FPSLabel.Text = "Loading..."
+
+local ExecutorLabel = Instance.new("TextLabel")
+ExecutorLabel.Name = "ExecutorLabel"
+ExecutorLabel.Parent = UIContainer
+ExecutorLabel.Size = UDim2.new(0, 200, 1, 0)
+ExecutorLabel.Position = UDim2.new(0, 480, 0, 0)
+ExecutorLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ExecutorLabel.BackgroundTransparency = 1
+ExecutorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExecutorLabel.TextScaled = true
+ExecutorLabel.Font = Enum.Font.SourceSansBold
+ExecutorLabel.Text = "Detecting Executor..."
+
+local function detectExecutor()
+    local executor = (identifyexecutor() or "Unknown"):lower()
+    local executors = {
+        wave = "Wave",
+        xeno = "Xeno",
+        fluxus = "Fluxus",
+        synapse = "Synapse X",
+        ["script-ware"] = "Script-Ware",
+        krnl = "KRNL",
+        solara = "Solara",
+        jjsploit = "JJSploit",
+        zorara = "Zorara",
+        fluxteam = "FluxTeam",
+        swift = "Swift",
+    }
+    for key, name in pairs(executors) do
+        if executor:find(key) then
+            return name
+        end
+    end
+    return "Unknown Executor"
+end
+
+task.spawn(function()
+    local executorName = detectExecutor()
+    ExecutorLabel.Text = "Executor: " .. executorName
+end)
 
 local isUIVisible = true
 
@@ -127,13 +172,15 @@ RunService.Heartbeat:Connect(function(deltaTime)
         timeElapsed = 0
     end
 end)
+
 task.wait()
+
 local function updatePing()
     getgenv().preserve_ping_tick = true
     while getgenv().preserve_ping_tick == true do
         local ping = math.floor(Stats.PerformanceStats.Ping:GetValue())
         PingLabel.Text = ping .. " ms"
-        task.wait(0.4)
+        task.wait(0.3)
     end
 end
 
